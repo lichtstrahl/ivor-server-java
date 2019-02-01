@@ -4,17 +4,18 @@ import root.id.KeyWord;
 import root.id.db.*;
 import root.id.dto.RequestDTO;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.*;
 
 public class RequestProcessor {
     private static DBContentLoader<Command> commandLoader = new DBContentLoader<>();
     private static DBContentLoader<Answer> answerLoader = new DBContentLoader<>();
     private static DBContentLoader<Question> questionLoader = new DBContentLoader<>();
     private static DBContentLoader<Communication> communicationLoader = new DBContentLoader<>();
+    private static DBContentLoader<CommunicationKey> communicationKeyLoader = new DBContentLoader<>();
     private static DBContentLoader<KeyWord> keywordLoader = new DBContentLoader<>();
+    private static Random random = new Random();
 
 
     private RequestProcessor() {
@@ -23,27 +24,26 @@ public class RequestProcessor {
 
     public static String processingRequest(RequestDTO request) {
         String liteString = StringProcessor.toStdFormat(request.getRequest());
-
+        random.setSeed(Calendar.getInstance().getTimeInMillis());
         Command c = isCommand(liteString);
         if (c != null) {
-            return "Это команда: " + c.getCmd();
+            return processingCommand(c);
         }
 
         Question q = isQuestion(liteString);
         if (q != null) {
-            return "Это вопрос: " + q.getContent();
+            return processingQuestion(q);
         }
 
         List<KeyWord> keyWords = findKeyWords(liteString);
-
         if (!keyWords.isEmpty()) {
-            return "Найдены ключевые слова: n=" + keyWords.size();
+            return processingKeyWord(keyWords);
         }
 
         return Const.IVOR_NO_ANSWER;
     }
 
-    public static List<KeyWord> findKeyWords(String string) {
+    private static List<KeyWord> findKeyWords(String string) {
         List<KeyWord> list = new LinkedList<>();
 
         for (KeyWord word : keywordLoader.loadAll(KeyWord.class)) {
@@ -54,7 +54,8 @@ public class RequestProcessor {
         return list;
     }
 
-    public static Command isCommand(String str) {
+    @Nullable
+    private static Command isCommand(String str) {
         HashSet<String> set = new HashSet<>(Arrays.asList(str.split(" ")));
         List<Command> commands = commandLoader.loadAll(Command.class);
         for (Command cmd : commands) {
@@ -66,19 +67,51 @@ public class RequestProcessor {
         return null;
     }
 
-    public static Question isQuestion(String str) {
+    @Nullable
+    private static Question isQuestion(String str) {
         String[] words = str.split(" ");
         HashSet<String> set = new HashSet<>(Arrays.asList(words));
         // Обработка Question
         List<Question> questions = questionLoader.loadAll(Question.class);
 
         for (Question q : questions) {
-            String[] qwords = q.getContent().split(" ");
-            HashSet<String> qSet = new HashSet<>(Arrays.asList(qwords));
+            String[] qWords = q.getContent().split(" ");
+            HashSet<String> qSet = new HashSet<>(Arrays.asList(qWords));
             if (qSet.equals(set)) {
                 return q;
             }
         }
         return null;
+    }
+
+    private static String processingCommand(Command c) {
+        return Const.COMMAND_NOT_SUPPORTED_IN_WEV_VERSION;
+    }
+
+    // TODO Здесь также необходимо возвращать и коммуникацию (Communication)
+    private static String processingQuestion(@Nonnull Question q) {
+        List<Answer> answers = answerLoader.loadAnswerForQuestion(q.getId());
+        if (!answers.isEmpty()) {
+            int r = random.nextInt(answers.size());
+            Answer answer = answers.get(r);
+            return answer.getContent();
+        }
+
+        return Const.IVOR_NO_ANSWER_FOR_QUESTION;
+    }
+
+    // TODO Здесь также необходимо возвращать и коммуникацию (CommunicationKey)
+    private static String processingKeyWord(List<KeyWord> words) {
+        for (KeyWord word : words) {
+            List<Answer> answers = answerLoader.loadAnswerForKeyWord(word.getId());
+            if (answers.isEmpty())
+                continue;
+
+            int r = random.nextInt(answers.size());
+            Answer answer =  answers.get(r);
+            return answer.getContent();
+        }
+
+        return Const.IVOR_NO_ANSWER_FOR_KEYWORDS;
     }
 }

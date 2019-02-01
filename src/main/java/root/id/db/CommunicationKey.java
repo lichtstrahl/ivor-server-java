@@ -3,33 +3,33 @@ package root.id.db;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class Communication extends DBInstance{
-    private long questionID;
+public class CommunicationKey extends DBInstance {
     private long answerID;
-    private int power;
+    private long keyID;
     private int correct;
+    private int power;
 
-    public Communication(ResultSet set) throws SQLException {
+    public CommunicationKey(ResultSet set) throws SQLException {
         super(set);
-        this.questionID = set.getLong("questionID");
         this.answerID = set.getLong("answerID");
-        this.power = set.getInt("power");
+        this.keyID = set.getLong("keyID");
         this.correct = set.getInt("correct");
-    }
-
-    public long getQuestionID() {
-        return questionID;
+        this.power = set.getInt("power");
     }
 
     public long getAnswerID() {
         return answerID;
     }
 
-    public int getPower() {
-        return power;
+    public long getKeyID() {
+        return keyID;
     }
 
     public int getCorrect() {
         return correct;
+    }
+
+    public int getPower() {
+        return power;
     }
 }
