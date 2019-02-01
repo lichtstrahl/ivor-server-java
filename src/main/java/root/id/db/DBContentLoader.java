@@ -1,5 +1,7 @@
 package root.id.db;
 
+import root.id.util.Const;
+
 import java.sql.*;
 import java.util.LinkedList;
 import java.util.List;
@@ -13,8 +15,10 @@ public class DBContentLoader<T extends DBInstance> {
     static {
         try {
             Class.forName("com.mysql.jdbc.Driver");
-            String unicode = "useSSL=false&autoReconnect=true&useUnicode=yes&characterEncoding=UTF-8";
-            CONNECTION = DriverManager.getConnection("jdbc:mysql://us-cdbr-iron-east-03.cleardb.net:3306/heroku_ec366bbe5402271?"+unicode, "bf2f73eeeafeec", "7eeac762");
+            CONNECTION = DriverManager.getConnection(
+                    Const.Database.CONNECTION_URL+"?"+Const.Database.CONNECTION_PARAMETERS,
+                    Const.Database.USER,
+                    Const.Database.PASSWORD);
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
