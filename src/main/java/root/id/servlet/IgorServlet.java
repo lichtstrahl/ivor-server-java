@@ -1,4 +1,4 @@
-package root.id;
+package root.id.servlet;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;

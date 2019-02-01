@@ -1,4 +1,7 @@
-package root.id;
+package root.id.servlet;
+
+import root.id.db.Command;
+import root.id.db.DBContentLoader;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -15,7 +18,7 @@ public class DBServlet extends HttpServlet {
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        List<Command> commands = DAO.getCommand();
+        List<Command> commands = new DBContentLoader<Command>().loadAll(Command.class);
         for (Command cmd : commands) {
             response.getOutputStream().write(cmd.getCmd().getBytes());
         }

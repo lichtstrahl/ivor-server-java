@@ -65,7 +65,7 @@
   <!-- ==================================================================== -->
   <!-- The default servlet.                                                 -->
   <!-- This servlet, normally mapped to /, provides the handling for static -->
-  <!-- content, OPTIONS and TRACE methods for the context.                  -->
+  <!-- request, OPTIONS and TRACE methods for the context.                  -->
   <!-- The following initParameters are supported:                          -->
   <!--  
  *  acceptRanges      If true, range requests and responses are
@@ -87,8 +87,8 @@
  *  redirectWelcome   If true, welcome files are redirected rather than
  *                    forwarded to.
  *
- *  gzip              If set to true, then static content will be served as
- *                    gzip content encoded if a matching resource is
+ *  gzip              If set to true, then static request will be served as
+ *                    gzip request encoded if a matching resource is
  *                    found ending with ".gz"
  *
  *  resourceBase      Set to replace the context resource base
@@ -98,7 +98,7 @@
  *
  *  relativeResourceBase
  *                    Set with a pathname relative to the base of the
- *                    servlet context root. Useful for only serving static content out
+ *                    servlet context root. Useful for only serving static request out
  *                    of only specific subdirectories.
  *
  *  pathInfoOnly      If true, only the path info will be applied to the resourceBase
@@ -116,12 +116,12 @@
  *  maxCachedFiles    The maximum number of files to cache
  *
  *  useFileMappedBuffer
- *                    If set to true, it will use mapped file buffers to serve static content
+ *                    If set to true, it will use mapped file buffers to serve static request
  *                    when using an NIO connector. Setting this value to false means that
  *                    a direct buffer will be used instead of a mapped file buffer.
  *                    This file sets the value to true.
  *
- *  cacheControl      If set, all static content will have this value set as the cache-control
+ *  cacheControl      If set, all static request will have this value set as the cache-control
  *                    header.
  *
  -->
@@ -248,7 +248,7 @@
   <!--                       FATAL, ERROR, WARNING, INFORMATION, and DEBUG. -->
   <!--                       [WARNING]                                      -->
   <!--                                                                      -->
-  <!--   mappedfile          Should we generate static content with one     -->
+  <!--   mappedfile          Should we generate static request with one     -->
   <!--                       print statement per input line, to ease        -->
   <!--                       debugging?  [false]                            -->
   <!--                                                                      -->
