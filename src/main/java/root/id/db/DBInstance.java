@@ -2,7 +2,6 @@ package root.id.db;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.List;
 
 public abstract class DBInstance {
     protected long id;

@@ -5,6 +5,36 @@
 <title>Hello</title>
 </head>
 <body>
-    <h2>Hello World!</h2>
+    <h2>This is backend for Ivor-web-application! Build with Java + Servlet + JDBC</h2><br/>
+    <p>Основные изменения:</p>
+    <lu>
+        <li>/api/request - единая точка входа, для получения ответа</li>
+        <li>/api/login - единая точка входа для проверки регистрации</li>
+        <li>ServerAnswer - унифицированный ответ от сервера</li>
+    </lu>
+
+    <h3>ServerAnswer</h3>
+    <p>
+        Любой сервлет посылает в ответ клиенту указанную структуру.
+        Содержит внутри себя 3 поля:
+        <lu>
+            <li>answer</li>
+            <li>data</li>
+            <li></li>
+        </lu>
+    </p>
+
+    <h3>Request</h3>
+    <p>
+
+    </p>
+
+    <h3>Login</h3>
+    <p>
+        Принимает JSON User. Но указывать все поля не нужно. Достаточно только "login" и "pass"
+        Если указанный пользователь будет найден, то вернётся JSON, представляющий этого пользователя.
+        Если нет, то в Answer будет содержаться ошибка
+    </p>
+
 </body>
 </html>

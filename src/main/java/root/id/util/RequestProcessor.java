@@ -3,9 +3,14 @@ package root.id.util;
 import root.id.KeyWord;
 import root.id.db.*;
 import root.id.dto.RequestDTO;
+import root.id.dto.ServerAnswer;
+import root.id.dto.UserDTO;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.servlet.http.HttpServletRequest;
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.util.*;
 
 public class RequestProcessor {
@@ -15,32 +20,61 @@ public class RequestProcessor {
     private static DBContentLoader<Communication> communicationLoader = new DBContentLoader<>();
     private static DBContentLoader<CommunicationKey> communicationKeyLoader = new DBContentLoader<>();
     private static DBContentLoader<KeyWord> keywordLoader = new DBContentLoader<>();
+    private static DBContentLoader<Client> userLoader = new DBContentLoader<>();
     private static Random random = new Random();
-
 
     private RequestProcessor() {
         throw new IllegalStateException("Это вспомогательный класс. Создание экземпляра не требуется.");
     }
 
-    public static String processingRequest(RequestDTO request) {
+    public static ServerAnswer processingRequest(RequestDTO request) {
         String liteString = StringProcessor.toStdFormat(request.getRequest());
         random.setSeed(Calendar.getInstance().getTimeInMillis());
+
+        String answer = Const.IVOR_NO_ANSWER;
         Command c = isCommand(liteString);
         if (c != null) {
-            return processingCommand(c);
+            answer = processingCommand(c);
+        } else {
+            Question q = isQuestion(liteString);
+            if (q != null) {
+                answer =  processingQuestion(q);
+            } else {
+                List<KeyWord> keyWords = findKeyWords(liteString);
+                if (!keyWords.isEmpty()) {
+                    answer =  processingKeyWord(keyWords);
+                }
+            }
         }
+        return ServerAnswer.answerOK(answer);
+    }
 
-        Question q = isQuestion(liteString);
-        if (q != null) {
-            return processingQuestion(q);
+    public static String getJSONFromBody(HttpServletRequest request) throws IOException {
+        StringBuilder jb = new StringBuilder();
+
+        String line;
+        BufferedReader reader = request.getReader();
+        while ((line = reader.readLine()) != null)
+            jb.append(line);
+
+        return jb.toString();
+    }
+
+    /**
+        Если возвраается пустая строка, значит пользователь найден.
+        В противном случае возвращается описание проблемы.
+     */
+    public static ServerAnswer checkUsersLoginPass(UserDTO user) {
+        List<Client> clients = userLoader.loadAll(Client.class);
+        for (Client client : clients) {
+            if (client.getLogin().equals(user.login)) {
+                if (client.getPass().equals(user.pass)) {
+                    return ServerAnswer.answerOK(user.loadFromDBClient(client));
+                }
+                return ServerAnswer.answerFail(Const.INVALID_PASSWORD_FOR_LOGIN);
+            }
         }
-
-        List<KeyWord> keyWords = findKeyWords(liteString);
-        if (!keyWords.isEmpty()) {
-            return processingKeyWord(keyWords);
-        }
-
-        return Const.IVOR_NO_ANSWER;
+        return ServerAnswer.answerFail(Const.INVALID_LOGIN);
     }
 
     private static List<KeyWord> findKeyWords(String string) {
