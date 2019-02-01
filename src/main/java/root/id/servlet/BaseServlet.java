@@ -22,13 +22,11 @@ abstract public class BaseServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        super.doGet(req, resp);
         enableCORS(resp);
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        super.doPost(req, resp);
         enableCORS(resp);
     }
 
@@ -40,7 +38,6 @@ abstract public class BaseServlet extends HttpServlet {
     }
 
     private void enableCORS(HttpServletResponse resp) {
-        resp.setHeader("Access-Control-Allow-Origin", "http://localhost:9000");
-        resp.setHeader("Access-Control-Allow-Methods", "GET");
+        resp.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
     }
 }
