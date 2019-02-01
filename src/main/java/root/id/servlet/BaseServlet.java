@@ -37,7 +37,7 @@ abstract public class BaseServlet extends HttpServlet {
     }
 
     private void enableCORS(HttpServletResponse resp) {
-        resp.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-        resp.setHeader("Access-Control-Allow-Origin", "https://ivor-web-client.herokuapp.com");
+//        resp.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+//        resp.setHeader("Access-Control-Allow-Origin", "https://ivor-web-client.herokuapp.com");
     }
 }
