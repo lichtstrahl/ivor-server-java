@@ -8,7 +8,7 @@ public abstract class DBInstance {
     protected long id;
 
     public DBInstance(ResultSet set) throws SQLException{
-        set.getLong("id");
+        this.id = set.getLong("id");
     }
 
     public long getId() {

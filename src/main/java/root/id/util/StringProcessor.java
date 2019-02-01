@@ -1,11 +1,5 @@
 package root.id.util;
 
-import root.id.KeyWord;
-import root.id.db.DBContentLoader;
-
-import java.util.LinkedList;
-import java.util.List;
-
 public class StringProcessor {
     private StringProcessor() {
         throw new IllegalStateException("Это вспомогательный класс. Создание экземпляра не требуется.");
