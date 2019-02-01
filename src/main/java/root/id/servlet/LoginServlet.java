@@ -13,11 +13,13 @@ import java.io.IOException;
 public class LoginServlet extends BaseServlet {
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        super.doPost(request, response);
         UserDTO user = gson.fromJson(RequestProcessor.getJSONFromBody(request), UserDTO.class);
         send(response, RequestProcessor.checkUsersLoginPass(user));
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        throw new UnsupportedOperationException("Данный сервлет не принимает GET-запросы. Только POST-запрос.");
+        super.doGet(request, response);
+//        throw new UnsupportedOperationException("Данный сервлет не принимает GET-запросы. Только POST-запрос.");
     }
 }

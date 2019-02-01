@@ -19,4 +19,28 @@ abstract public class BaseServlet extends HttpServlet {
         res.setCharacterEncoding("UTF-8");
         res.getWriter().write(gson.toJson(serverAnswer, ServerAnswer.class));
     }
+
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        super.doGet(req, resp);
+        enableCORS(resp);
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        super.doPost(req, resp);
+        enableCORS(resp);
+    }
+
+    @Override
+    protected void doOptions(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
+        enableCORS(resp);
+        resp.setStatus(HttpServletResponse.SC_OK);
+    }
+
+    private void enableCORS(HttpServletResponse resp) {
+        resp.setHeader("Access-Control-Allow-Origin", "http://localhost:9000");
+        resp.setHeader("Access-Control-Allow-Methods", "GET");
+    }
 }
