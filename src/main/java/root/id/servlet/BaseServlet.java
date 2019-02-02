@@ -21,23 +21,16 @@ abstract public class BaseServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        enableCORS(resp);
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        enableCORS(resp);
     }
 
     @Override
     protected void doOptions(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
-        enableCORS(resp);
         resp.setStatus(HttpServletResponse.SC_OK);
     }
 
-    private void enableCORS(HttpServletResponse resp) {
-//        resp.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-//        resp.setHeader("Access-Control-Allow-Origin", "https://ivor-web-client.herokuapp.com");
-    }
 }
