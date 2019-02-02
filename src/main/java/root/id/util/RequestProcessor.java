@@ -152,4 +152,10 @@ public class RequestProcessor {
 
         return Const.IVOR_NO_ANSWER_FOR_KEYWORDS;
     }
+
+    public static String init() {
+        String msg = "RequestProcessor is init";
+        System.out.println(msg);
+        return msg;
+    }
 }

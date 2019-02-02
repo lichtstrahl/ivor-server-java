@@ -11,11 +11,11 @@ import java.util.List;
  * Загрузчик для сузностей из БД
  */
 public class DBContentLoader<T extends DBInstance> {
-    private static Connection CONNECTION;
+    private Connection CONNECTION;
 
-    static {
+    {
         try {
-            Class.forName("com.mysql.jdbc.Driver");
+            Class.forName("com.mysql.jdbc.cj.Driver");
             CONNECTION = DriverManager.getConnection(
                     Const.Database.CONNECTION_URL+"?"+Const.Database.CONNECTION_PARAMETERS,
                     Const.Database.USER,
