@@ -66,6 +66,10 @@ public class RequestProcessor {
      */
     public static ServerAnswer checkUsersLoginPass(UserDTO user) {
         List<Client> clients = userLoader.loadAll(Client.class);
+        if (clients == null) {
+            return ServerAnswer.answerFail(Const.NULL_POINTER_EXCEPTION + "RequestProcessor:checkUsersLoginPass");
+        }
+
         for (Client client : clients) {
             if (client.getLogin().equals(user.login)) {
                 if (client.getPass().equals(user.pass)) {

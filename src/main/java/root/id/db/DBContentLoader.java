@@ -1,5 +1,6 @@
 package root.id.db;
 
+import jdk.internal.jline.internal.Nullable;
 import root.id.util.Const;
 
 import java.sql.*;
@@ -19,15 +20,18 @@ public class DBContentLoader<T extends DBInstance> {
                     Const.Database.CONNECTION_URL+"?"+Const.Database.CONNECTION_PARAMETERS,
                     Const.Database.USER,
                     Const.Database.PASSWORD);
+            System.out.println("Соединение с БД успешно создано");
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
     }
 
+    @Nullable
     public List<T> loadAll(Class<? extends DBInstance> cls) {
         return loadFromDB("SELECT * FROM " + cls.getSimpleName(), cls);
     }
 
+    @Nullable
     public List<T> loadAnswerForQuestion(long qID) {
         return loadFromDB("SELECT * \n" +
                 "FROM answer\n" +
@@ -36,6 +40,7 @@ public class DBContentLoader<T extends DBInstance> {
                 ")", Answer.class);
     }
 
+    @Nullable
     public List<T> loadAnswerForKeyWord(long kID) {
         return loadFromDB("SELECT *\n" +
                 "FROM answer\n" +
@@ -44,11 +49,12 @@ public class DBContentLoader<T extends DBInstance> {
                 ")", Answer.class);
     }
 
+    @Nullable
     private List<T> loadFromDB(String query, Class<? extends DBInstance> cls) {
         try {
             PreparedStatement ps = CONNECTION.prepareStatement(query);
             ResultSet set = ps.executeQuery();
-
+            System.out.println("Запрос успешно выполнен");
             return parseResultSet(set, cls);
         } catch (Exception e) {
             System.out.println(e.getMessage());
