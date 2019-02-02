@@ -27,6 +27,10 @@
             <param-name>cors.allowed.origins</param-name>
             <param-value>*</param-value>
         </init-param>
+        <init-param>
+            <param-name>cors.allowed.headers</param-name>
+            <param-value>*</param-value>
+        </init-param>
     </filter>
 
     <filter-mapping>
