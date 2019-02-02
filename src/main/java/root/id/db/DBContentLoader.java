@@ -15,7 +15,7 @@ public class DBContentLoader<T extends DBInstance> {
 
     {
         try {
-            Class.forName("com.mysql.jdbc.cj.Driver");
+            Class.forName("com.mysql.jdbc.Driver");
             CONNECTION = DriverManager.getConnection(
                     Const.Database.CONNECTION_URL+"?"+Const.Database.CONNECTION_PARAMETERS,
                     Const.Database.USER,
