@@ -1,8 +1,8 @@
 package root.id.db;
 
-import jdk.internal.jline.internal.Nullable;
 import root.id.util.Const;
 
+import javax.annotation.Nullable;
 import java.sql.*;
 import java.util.LinkedList;
 import java.util.List;
