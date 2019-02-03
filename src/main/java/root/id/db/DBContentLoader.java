@@ -54,10 +54,15 @@ public class DBContentLoader<T extends DBInstance> {
         try {
             PreparedStatement ps = CONNECTION.prepareStatement(query);
             ResultSet set = ps.executeQuery();
-            System.out.println("Запрос успешно выполнен");
             return parseResultSet(set, cls);
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
+        } catch (Exception e1) {
+            try {
+                PreparedStatement ps = CONNECTION.prepareStatement(query);
+                ResultSet set = ps.executeQuery();
+                return parseResultSet(set, cls);
+            } catch (Exception e2) {
+                System.out.println(e2.getMessage());
+            }
         }
         return null;
     }
