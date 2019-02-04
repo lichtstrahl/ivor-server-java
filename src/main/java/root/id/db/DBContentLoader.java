@@ -16,6 +16,10 @@ public class DBContentLoader {
     private Connection CONNECTION;
 
     private DBContentLoader() {
+        openConnection();
+    }
+
+    public void openConnection() {
         try {
             Class.forName("com.mysql.jdbc.Driver");
             CONNECTION = DriverManager.getConnection(
@@ -29,9 +33,21 @@ public class DBContentLoader {
         }
     }
 
-    public static DBContentLoader getInstance() {
+    public void refreshConnection() {
+        try {
+            CONNECTION.close();
+            openConnection();
+            System.out.println("Подключение обновлено");
+        } catch (SQLException e) {
+            System.out.println("Исключение при обновлении подключения");
+            System.out.println(e.getMessage());
+        }
+    }
+
+    synchronized public static DBContentLoader getInstance() {
         if (instance == null)
             instance = new DBContentLoader();
+        instance.refreshConnection();
         return instance;
     }
 
