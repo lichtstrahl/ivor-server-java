@@ -51,6 +51,18 @@ public class RequestProcessor {
         return jb.toString();
     }
 
+    public static boolean evaluation(String request, long id, int eval) {
+        if (request.equals("communication")) {
+            return DBContentLoader.getInstance().evaluationCommunication(id, eval);
+        }
+        if (request.equals("communication_key")) {
+            return DBContentLoader.getInstance().evaluationCommunicationKey(id, eval);
+        }
+        return false;
+    }
+
+
+
     /**
         Если возвраается пустая строка, значит пользователь найден.
         В противном случае возвращается описание проблемы.
@@ -127,7 +139,6 @@ public class RequestProcessor {
         return Const.COMMAND_NOT_SUPPORTED_IN_WEV_VERSION;
     }
 
-    // TODO Здесь также необходимо возвращать и коммуникацию (Communication)
     private static ServerAnswer<AnswerForQuestion> processingQuestion(@Nonnull Question q) {
         List<Answer> answers = DBContentLoader.getInstance().loadAnswerForQuestion(q.getId());
         if (!answers.isEmpty()) {
@@ -140,7 +151,6 @@ public class RequestProcessor {
         return ServerAnswer.answerOK(AnswerForQuestion.valueOf(Const.IVOR_NO_ANSWER_FOR_QUESTION, null));
     }
 
-    // TODO Здесь также необходимо возвращать и коммуникацию (CommunicationKey)
     private static ServerAnswer<AnswerForKeyWord> processingKeyWord(List<KeyWord> words) {
         for (KeyWord word : words) {
             List<Answer> answers = DBContentLoader.getInstance().loadAnswerForKeyWord(word.getId());
