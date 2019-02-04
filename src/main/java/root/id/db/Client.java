@@ -1,7 +1,11 @@
 package root.id.db;
 
+import root.id.dto.UserDTO;
+
+import javax.annotation.Nullable;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Date;
 
 public class Client extends DBInstance {
     private String realName;
@@ -24,6 +28,8 @@ public class Client extends DBInstance {
         this.lastEntry = set.getString("lastEntry");
         this.admin = set.getInt("admin");
     }
+
+    public Client() {}
 
     public String getRealName() {
         return realName;
@@ -55,5 +61,17 @@ public class Client extends DBInstance {
 
     public Integer getAdmin() {
         return admin;
+    }
+
+    public Client loadFromUserDTO(UserDTO user) {
+        this.realName = user.realName;
+        this.login = user.login;
+        this.pass = user.pass;
+        this.age = user.age;
+        this.city = user.city;
+        this.email = user.email;
+        this.lastEntry = user.lastEntry;
+        this.admin = user.admin;
+        return this;
     }
 }

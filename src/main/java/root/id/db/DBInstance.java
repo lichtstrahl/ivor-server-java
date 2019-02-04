@@ -10,6 +10,8 @@ public abstract class DBInstance {
         this.id = set.getLong("id");
     }
 
+    public DBInstance() {}
+
     public long getId() {
         return id;
     }

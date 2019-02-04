@@ -15,6 +15,7 @@ public class Const {
         public static final String CONNECTION_URL = "jdbc:mysql://us-cdbr-iron-east-03.cleardb.net/heroku_edd0ec02de1466d";
         public static final String USER = "b19511ab5ea6bd";
         public static final String PASSWORD = "19ee449d";
+        public static final String ERROR_INSERT_USER = "Ошибка при добавлении нового пользователя";
     }
 }
 
