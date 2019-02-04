@@ -56,7 +56,7 @@ public class DBContentLoader {
                 "insert into client " +
                         "(realName, login, pass, age, city, email, lastEntry, admin)\n" +
                 "values  ('"+user.realName+ "', '" + user.login + "', '" + user.pass + "', " + user.age + ", '" + user.city + "', '" + user.email + "', '" + user.lastEntry + "', " + user.admin +");";
-        return insertToDB(query);
+        return modifyDataInDB(query);
     }
 
     @Nullable
@@ -90,11 +90,54 @@ public class DBContentLoader {
         return com.get(0);
     }
 
+    public CommunicationKey getCommunicationKey(long id) {
+        List<CommunicationKey> com = loadFromDB("SELECT *\n" +
+                "FROM communicationkey\n" +
+                "WHERE id = " + id, CommunicationKey.class);
+        return com.get(0);
+    }
+
+    public boolean evaluationCommunicationKey(long id, long eval) {
+        CommunicationKey c = getCommunicationKey(id);
+        int curEval = c.getCorrect();
+        int curPower = c.getPower();
+
+        if (eval > 0) curEval++;
+        if (eval < 0) curEval--;
+
+        String query = "update communicationkey\n" +
+                "set correct = "+curEval+", power = "+ ++curPower +"\n" +
+                "where id = "+id+"";
+        return modifyDataInDB(query);
+    }
+
     public Communication getCommunication(long answerID, long qID) {
         List<Communication> com =  loadFromDB("SELECT *\n" +
                 "FROM communication\n" +
                 "WHERE (answerID = "+answerID+" AND questionID = "+qID+")", Communication.class);
         return com.get(0);
+    }
+
+    public Communication getCommunication(long id) {
+        List<Communication> com = loadFromDB("SELECT *\n" +
+                "FROM communication\n" +
+                "WHERE id = " + id, Communication.class);
+        return com.get(0);
+    }
+
+    public boolean evaluationCommunication(long id, int eval) {
+        Communication c = getCommunication(id);
+        int curEval = c.getCorrect();
+        int curPower = c.getPower();
+
+        if (eval > 0) curEval++;
+        if (eval < 0) curEval--;
+
+        String query = "update communication\n" +
+                "set correct = "+curEval+", power = "+ ++curPower +"\n" +
+                "where id = "+id+"";
+
+        return modifyDataInDB(query);
     }
 
     @Nullable
@@ -111,18 +154,18 @@ public class DBContentLoader {
     }
 
     @Nullable
-    private boolean insertToDB(String query) {
+    private boolean modifyDataInDB(String query) {
         try (PreparedStatement ps = CONNECTION.prepareStatement(query)){
             ps.executeUpdate(query);
             return true;
         } catch (SQLException e) {
-            System.out.println("Исключение insertToDB");
+            System.out.println("Исключение modifyDataInDB");
             System.out.println(e.getMessage());
             return false;
         }
     }
 
-    private static <T> List<T> parseResultSet(ResultSet set, Class<? extends DBInstance> type) {
+    private <T> List<T> parseResultSet(ResultSet set, Class<? extends DBInstance> type) {
         List<T> result = new LinkedList<>();
         try {
             while (set.next()) {
