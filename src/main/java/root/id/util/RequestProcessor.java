@@ -2,9 +2,7 @@ package root.id.util;
 
 import root.id.KeyWord;
 import root.id.db.*;
-import root.id.dto.RequestDTO;
-import root.id.dto.ServerAnswer;
-import root.id.dto.UserDTO;
+import root.id.dto.*;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -24,22 +22,22 @@ public class RequestProcessor {
         String liteString = StringProcessor.toStdFormat(request.getRequest());
         random.setSeed(Calendar.getInstance().getTimeInMillis());
 
-        String answer = Const.IVOR_NO_ANSWER;
         Command c = isCommand(liteString);
         if (c != null) {
-            answer = processingCommand(c);
+            return ServerAnswer.answerOK(processingCommand(c));
         } else {
             Question q = isQuestion(liteString);
             if (q != null) {
-                answer =  processingQuestion(q);
+                return processingQuestion(q);
             } else {
                 List<KeyWord> keyWords = findKeyWords(liteString);
                 if (!keyWords.isEmpty()) {
-                    answer =  processingKeyWord(keyWords);
+                    return  processingKeyWord(keyWords);
                 }
             }
         }
-        return ServerAnswer.answerOK(answer);
+
+        return ServerAnswer.answerOK(AnswerForQuestion.valueOf(Const.IVOR_NO_ANSWER, null));
     }
 
     public static String getJSONFromBody(HttpServletRequest request) throws IOException {
@@ -130,19 +128,20 @@ public class RequestProcessor {
     }
 
     // TODO Здесь также необходимо возвращать и коммуникацию (Communication)
-    private static String processingQuestion(@Nonnull Question q) {
+    private static ServerAnswer<AnswerForQuestion> processingQuestion(@Nonnull Question q) {
         List<Answer> answers = DBContentLoader.getInstance().loadAnswerForQuestion(q.getId());
         if (!answers.isEmpty()) {
             int r = random.nextInt(answers.size());
             Answer answer = answers.get(r);
-            return answer.getContent();
+            Communication com = DBContentLoader.getInstance().getCommunication(answer.getId(), q.getId());
+            return ServerAnswer.answerOK(AnswerForQuestion.valueOf(answer.getContent(), com.getId()));
         }
 
-        return Const.IVOR_NO_ANSWER_FOR_QUESTION;
+        return ServerAnswer.answerOK(AnswerForQuestion.valueOf(Const.IVOR_NO_ANSWER_FOR_QUESTION, null));
     }
 
     // TODO Здесь также необходимо возвращать и коммуникацию (CommunicationKey)
-    private static String processingKeyWord(List<KeyWord> words) {
+    private static ServerAnswer<AnswerForKeyWord> processingKeyWord(List<KeyWord> words) {
         for (KeyWord word : words) {
             List<Answer> answers = DBContentLoader.getInstance().loadAnswerForKeyWord(word.getId());
             if (answers.isEmpty())
@@ -150,10 +149,11 @@ public class RequestProcessor {
 
             int r = random.nextInt(answers.size());
             Answer answer =  answers.get(r);
-            return answer.getContent();
+            CommunicationKey comKey = DBContentLoader.getInstance().getCommunicationKey(answer.getId(), word.getId());
+            return ServerAnswer.answerOK(AnswerForKeyWord.valueOf(answer.getContent(), comKey.getId()));
         }
 
-        return Const.IVOR_NO_ANSWER_FOR_KEYWORDS;
+        return ServerAnswer.answerOK(AnswerForKeyWord.valueOf(Const.IVOR_NO_ANSWER_FOR_KEYWORDS, null));
     }
 
     public static String init() {
