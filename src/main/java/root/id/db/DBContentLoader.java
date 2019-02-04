@@ -83,6 +83,20 @@ public class DBContentLoader {
                 ")", Answer.class);
     }
 
+    public CommunicationKey getCommunicationKey(long answerID, long keyID) {
+        List<CommunicationKey> com =  loadFromDB("SELECT *\n" +
+                "FROM communicationkey\n" +
+                "WHERE (answerID = "+answerID+" AND keyID = "+keyID+")", CommunicationKey.class);
+        return com.get(0);
+    }
+
+    public Communication getCommunication(long answerID, long qID) {
+        List<Communication> com =  loadFromDB("SELECT *\n" +
+                "FROM communication\n" +
+                "WHERE (answerID = "+answerID+" AND questionID = "+qID+")", Communication.class);
+        return com.get(0);
+    }
+
     @Nullable
     private <T extends DBInstance> List<T> loadFromDB(String query, Class<? extends DBInstance> cls) {
         try (PreparedStatement ps = CONNECTION.prepareStatement(query);
