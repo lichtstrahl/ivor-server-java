@@ -14,13 +14,6 @@ import java.io.IOException;
 import java.util.*;
 
 public class RequestProcessor {
-    private static DBContentLoader<Command> commandLoader = new DBContentLoader<>();
-    private static DBContentLoader<Answer> answerLoader = new DBContentLoader<>();
-    private static DBContentLoader<Question> questionLoader = new DBContentLoader<>();
-    private static DBContentLoader<Communication> communicationLoader = new DBContentLoader<>();
-    private static DBContentLoader<CommunicationKey> communicationKeyLoader = new DBContentLoader<>();
-    private static DBContentLoader<KeyWord> keywordLoader = new DBContentLoader<>();
-    private static DBContentLoader<Client> userLoader = new DBContentLoader<>();
     private static Random random = new Random();
 
     private RequestProcessor() {
@@ -65,7 +58,7 @@ public class RequestProcessor {
         В противном случае возвращается описание проблемы.
      */
     public static ServerAnswer checkUsersLoginPass(UserDTO user) {
-        List<Client> clients = userLoader.loadAll(Client.class);
+        List<Client> clients = DBContentLoader.getInstance().loadAll(Client.class);
         if (clients == null) {
             return ServerAnswer.answerFail(Const.NULL_POINTER_EXCEPTION + "RequestProcessor:checkUsersLoginPass");
         }
@@ -81,10 +74,19 @@ public class RequestProcessor {
         return ServerAnswer.answerFail(Const.INVALID_LOGIN);
     }
 
+    public static ServerAnswer insertNewUser(UserDTO user) {
+        if (DBContentLoader.getInstance().insertNewUser(user)) {
+            return ServerAnswer.answerOK(null);
+        } else {
+            return ServerAnswer.answerFail(Const.Database.ERROR_INSERT_USER);
+        }
+    }
+
     private static List<KeyWord> findKeyWords(String string) {
         List<KeyWord> list = new LinkedList<>();
+        List<KeyWord> words = DBContentLoader.getInstance().loadAll(KeyWord.class);
 
-        for (KeyWord word : keywordLoader.loadAll(KeyWord.class)) {
+        for (KeyWord word : words) {
             if (string.contains(word.getContent()))
                 list.add(word);
         }
@@ -95,7 +97,8 @@ public class RequestProcessor {
     @Nullable
     private static Command isCommand(String str) {
         HashSet<String> set = new HashSet<>(Arrays.asList(str.split(" ")));
-        List<Command> commands = commandLoader.loadAll(Command.class);
+        List<Command> commands = DBContentLoader.getInstance().loadAll(Command.class);
+
         for (Command cmd : commands) {
             HashSet<String> cmdSet = new HashSet<>(Arrays.asList(cmd.getCmd().split(" ")));
             if (set.containsAll(cmdSet)) {
@@ -110,7 +113,7 @@ public class RequestProcessor {
         String[] words = str.split(" ");
         HashSet<String> set = new HashSet<>(Arrays.asList(words));
         // Обработка Question
-        List<Question> questions = questionLoader.loadAll(Question.class);
+        List<Question> questions = DBContentLoader.getInstance().loadAll(Question.class);
 
         for (Question q : questions) {
             String[] qWords = q.getContent().split(" ");
@@ -128,7 +131,7 @@ public class RequestProcessor {
 
     // TODO Здесь также необходимо возвращать и коммуникацию (Communication)
     private static String processingQuestion(@Nonnull Question q) {
-        List<Answer> answers = answerLoader.loadAnswerForQuestion(q.getId());
+        List<Answer> answers = DBContentLoader.getInstance().loadAnswerForQuestion(q.getId());
         if (!answers.isEmpty()) {
             int r = random.nextInt(answers.size());
             Answer answer = answers.get(r);
@@ -141,7 +144,7 @@ public class RequestProcessor {
     // TODO Здесь также необходимо возвращать и коммуникацию (CommunicationKey)
     private static String processingKeyWord(List<KeyWord> words) {
         for (KeyWord word : words) {
-            List<Answer> answers = answerLoader.loadAnswerForKeyWord(word.getId());
+            List<Answer> answers = DBContentLoader.getInstance().loadAnswerForKeyWord(word.getId());
             if (answers.isEmpty())
                 continue;
 

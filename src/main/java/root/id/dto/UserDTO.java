@@ -1,6 +1,7 @@
 package root.id.dto;
 
 import com.google.gson.annotations.SerializedName;
+import com.mysql.cj.jdbc.result.ResultSetImpl;
 import root.id.db.Client;
 
 public class UserDTO {
