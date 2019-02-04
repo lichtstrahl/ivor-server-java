@@ -51,20 +51,16 @@ public class DBContentLoader<T extends DBInstance> {
 
     @Nullable
     private List<T> loadFromDB(String query, Class<? extends DBInstance> cls) {
-        try {
-            PreparedStatement ps = CONNECTION.prepareStatement(query);
-            ResultSet set = ps.executeQuery();
+        try (PreparedStatement ps = CONNECTION.prepareStatement(query);
+             ResultSet set = ps.executeQuery()) {
+
             return parseResultSet(set, cls);
         } catch (Exception e1) {
-            try {
-                PreparedStatement ps = CONNECTION.prepareStatement(query);
-                ResultSet set = ps.executeQuery();
-                return parseResultSet(set, cls);
-            } catch (Exception e2) {
-                System.out.println(e2.getMessage());
-            }
+            System.out.println("Ошибка в loadFromDB: " + CONNECTION);
+            System.out.println(e1.getMessage());
         }
         return null;
+
     }
 
     private static <T> List<T> parseResultSet(ResultSet set, Class<? extends DBInstance> type) {
