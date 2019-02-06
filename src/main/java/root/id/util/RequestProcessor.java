@@ -85,6 +85,14 @@ public class RequestProcessor {
     }
 
     public static ServerAnswer insertNewUser(UserDTO user) {
+        if (!DBContentLoader.getInstance().getUser(user).isEmpty()) {
+            return ServerAnswer.answerFail(Const.Database.USER_EXISTS);
+        }
+
+        if (DBContentLoader.getInstance().getUser(user.login) != null) {
+            return ServerAnswer.answerFail(Const.Database.LOGIN_BUSY);
+        }
+
         if (DBContentLoader.getInstance().insertNewUser(user)) {
             return ServerAnswer.answerOK(null);
         } else {

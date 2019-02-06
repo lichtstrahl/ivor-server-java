@@ -59,6 +59,30 @@ public class DBContentLoader {
         return modifyDataInDB(query);
     }
 
+    public List<Client> getUser(UserDTO user) {
+        String getUsers =
+                "SELECT *\n" +
+                        "FROM client\n" +
+                        "WHERE (" +
+                        "realName = '"+user.realName+"' AND " +
+                        "login = '"+user.login+"' AND " +
+                        "pass = '"+user.pass+"' AND " +
+                        "age = "+user.age+" AND " +
+                        "city = '"+user.city+"' AND " +
+                        "email = '"+user.email+"' AND " +
+                        "lastEntry = '"+user.lastEntry+"'" +
+                        ")";
+        return loadFromDB(getUsers, Client.class);
+    }
+
+    public List<Client> getUser(String login) {
+        String query =
+                "SELECT * " +
+                "FROM client " +
+                "WHERE login = '"+login+"'";
+        return loadFromDB(query, Client.class);
+    }
+
     @Nullable
     public <T extends DBInstance> List<T> loadAll(Class<? extends DBInstance> cls) {
         return loadFromDB("SELECT * FROM " + cls.getSimpleName(), cls);
