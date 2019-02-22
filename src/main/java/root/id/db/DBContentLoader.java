@@ -35,8 +35,10 @@ public class DBContentLoader {
 
     public void refreshConnection() {
         try {
+            System.out.println("Подключение: " + CONNECTION.isClosed());
             CONNECTION.close();
             openConnection();
+            System.out.println("Подключение: " + CONNECTION.isClosed());
             System.out.println("Подключение обновлено");
         } catch (SQLException e) {
             System.out.println("Исключение при обновлении подключения");
