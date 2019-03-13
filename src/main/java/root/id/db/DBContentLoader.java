@@ -1,5 +1,7 @@
 package root.id.db;
 
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 import root.id.dto.UserDTO;
 import root.id.util.Const;
 
@@ -8,47 +10,40 @@ import java.sql.*;
 import java.util.LinkedList;
 import java.util.List;
 
-/**
- * Загрузчик для сузностей из БД
- */
 public class DBContentLoader {
-    private static DBContentLoader instance;
-    private Connection CONNECTION;
-
-    private DBContentLoader() {
-        openConnection();
-    }
-
-    public void openConnection() {
+    private static HikariConfig config = new HikariConfig();
+    private static HikariDataSource ds;
+    static {
         try {
             Class.forName("com.mysql.jdbc.Driver");
-            CONNECTION = DriverManager.getConnection(
-                    Const.Database.CONNECTION_URL+"?"+Const.Database.CONNECTION_PARAMETERS,
-                    Const.Database.USER,
-                    Const.Database.PASSWORD);
-            System.out.println("Соединение с БД успешно создано");
-        } catch (Exception e) {
-            System.out.println("Исключение конструктор DBContentLoader");
+            config.setJdbcUrl(Const.Database.CONNECTION_URL + "?" + Const.Database.CONNECTION_PARAMETERS);
+            config.setUsername(Const.Database.USER);
+            config.setPassword(Const.Database.PASSWORD);
+            config.addDataSourceProperty("cachePrepStmts", "true");
+            config.addDataSourceProperty("prepStmtCacheSize", "250");
+            config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
+            config.addDataSourceProperty("tcpKeepAlive", true);
+            config.setIdleTimeout(3000);
+            config.setMinimumIdle(0);
+            config.setMaximumPoolSize(10);
+            ds = new HikariDataSource(config);
+        } catch (ClassNotFoundException e) {
+            System.out.println("Не удалось найти драйвер");
             System.out.println(e.getMessage());
+            System.out.println();
         }
     }
 
-    public void refreshConnection() {
-        try {
-            if (CONNECTION.isClosed()) {
-                openConnection();
-                System.out.println("Подключение обновлено");
-            }
-        } catch (SQLException e) {
-            System.out.println("Исключение при обновлении подключения");
-            System.out.println(e.getMessage());
-        }
+
+    private static DBContentLoader instance;
+
+    private DBContentLoader() {
+//        openConnection();
     }
 
     synchronized public static DBContentLoader getInstance() {
         if (instance == null)
             instance = new DBContentLoader();
-        instance.refreshConnection();
         return instance;
     }
 
@@ -167,10 +162,12 @@ public class DBContentLoader {
 
     @Nullable
     private <T extends DBInstance> List<T> loadFromDB(String query, Class<? extends DBInstance> cls) {
-        try (PreparedStatement ps = CONNECTION.prepareStatement(query);
+        try (Connection connection = ds.getConnection();
+             PreparedStatement ps = connection.prepareStatement(query);
              ResultSet set = ps.executeQuery()) {
-
-            return parseResultSet(set, cls);
+            List<T> result =  parseResultSet(set, cls);
+            connection.close();
+            return result;
         } catch (SQLException e1) {
             System.out.println("Исключение loadFrom DB");
             System.out.println(e1.getMessage());
@@ -180,8 +177,10 @@ public class DBContentLoader {
 
     @Nullable
     private boolean modifyDataInDB(String query) {
-        try (PreparedStatement ps = CONNECTION.prepareStatement(query)){
-            ps.executeUpdate(query);
+        try (   Connection connection = ds.getConnection();
+                PreparedStatement ps = connection.prepareStatement(query)){
+                ps.executeUpdate(query);
+                connection.close();
             return true;
         } catch (SQLException e) {
             System.out.println("Исключение modifyDataInDB");

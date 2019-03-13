@@ -11,7 +11,7 @@ public class Const {
     public static final String OK = "OK";
 
     public static class Database {
-        public static final String CONNECTION_PARAMETERS = "useSSL=false&autoReconnect=true&useUnicode=yes&characterEncoding=UTF-8";
+        public static final String CONNECTION_PARAMETERS = "useSSL=false&failOverReadOnly=false&useUnicode=yes&characterEncoding=UTF-8";
         public static final String CONNECTION_URL = "jdbc:mysql://us-cdbr-iron-east-03.cleardb.net/heroku_edd0ec02de1466d";
         public static final String USER = "b19511ab5ea6bd";
         public static final String PASSWORD = "19ee449d";

@@ -89,7 +89,7 @@ public class RequestProcessor {
             return ServerAnswer.answerFail(Const.Database.USER_EXISTS);
         }
 
-        if (DBContentLoader.getInstance().getUser(user.login) != null) {
+        if (!DBContentLoader.getInstance().getUser(user.login).isEmpty()) {
             return ServerAnswer.answerFail(Const.Database.LOGIN_BUSY);
         }
 
