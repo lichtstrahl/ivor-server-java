@@ -14,7 +14,7 @@ public class LoginServlet extends BaseServlet {
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         super.doPost(request, response);
-        UserDTO user = gson.fromJson(RequestProcessor.getJSONFromBody(request), UserDTO.class);
+        UserDTO user = gson.fromJson(getJSONFromBody(request), UserDTO.class);
         send(response, RequestProcessor.checkUsersLoginPass(user));
     }
 

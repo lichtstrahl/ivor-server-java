@@ -1,10 +1,14 @@
 package root.id.dto;
 
 import com.google.gson.annotations.SerializedName;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
+@Data
+@EqualsAndHashCode(callSuper = false)
 public class AnswerForKeyWord extends AnswerContainer {
     @SerializedName("communication_key")
-    public Long comID;
+    private Long comID;
 
     public static AnswerForKeyWord valueOf(String answer, Long comID) {
         AnswerForKeyWord a = new AnswerForKeyWord();

@@ -1,7 +1,7 @@
 package root.id.dto;
 
 import com.google.gson.annotations.SerializedName;
-import root.id.util.Const;
+import root.id.Const;
 
 public class ServerAnswer<T> {
     @SerializedName("error")

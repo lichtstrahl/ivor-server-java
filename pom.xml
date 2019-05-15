@@ -75,6 +75,13 @@
             <artifactId>HikariCP</artifactId>
             <version>2.6.3</version>
         </dependency>
+        <!-- Для Assert -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-core</artifactId>
+            <version>2.5.6</version>
+        </dependency>
+
     </dependencies>
 
     <build>

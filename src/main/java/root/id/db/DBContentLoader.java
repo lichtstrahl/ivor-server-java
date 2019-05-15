@@ -3,7 +3,7 @@ package root.id.db;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import root.id.dto.UserDTO;
-import root.id.util.Const;
+import root.id.Const;
 
 import javax.annotation.Nullable;
 import java.sql.*;

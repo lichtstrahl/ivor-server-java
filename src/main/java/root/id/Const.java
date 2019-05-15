@@ -1,4 +1,4 @@
-package root.id.util;
+package root.id;
 
 public class Const {
     public static final String IVOR_NO_ANSWER = "Давай поговорим о чем-нибудь другом";

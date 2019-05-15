@@ -1,14 +1,12 @@
 package root.id.util;
 
-import root.id.KeyWord;
+import org.springframework.util.Assert;
+import root.id.Const;
 import root.id.db.*;
 import root.id.dto.*;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.servlet.http.HttpServletRequest;
-import java.io.BufferedReader;
-import java.io.IOException;
 import java.util.*;
 
 public class RequestProcessor {
@@ -19,18 +17,20 @@ public class RequestProcessor {
     }
 
     public static ServerAnswer processingRequest(RequestDTO request) {
-        String liteString = StringProcessor.toStdFormat(request.getRequest());
+        StringProcessor liteString = StringProcessor
+                                        .createFromString(request.getRequest())
+                                        .toStdFormat();
         random.setSeed(Calendar.getInstance().getTimeInMillis());
 
-        Command c = isCommand(liteString);
+        Command c = isCommand(liteString.getValue());
         if (c != null) {
             return ServerAnswer.answerOK(processingCommand(c));
         } else {
-            Question q = isQuestion(liteString);
+            Question q = isQuestion(liteString.getValue());
             if (q != null) {
                 return processingQuestion(q);
             } else {
-                List<KeyWord> keyWords = findKeyWords(liteString);
+                List<KeyWord> keyWords = findKeyWords(liteString.getValue());
                 if (!keyWords.isEmpty()) {
                     return  processingKeyWord(keyWords);
                 }
@@ -38,17 +38,6 @@ public class RequestProcessor {
         }
 
         return ServerAnswer.answerOK(AnswerForQuestion.valueOf(Const.IVOR_NO_ANSWER, null));
-    }
-
-    public static String getJSONFromBody(HttpServletRequest request) throws IOException {
-        StringBuilder jb = new StringBuilder();
-
-        String line;
-        BufferedReader reader = request.getReader();
-        while ((line = reader.readLine()) != null)
-            jb.append(line);
-
-        return jb.toString();
     }
 
     public static boolean evaluation(String request, long id, int eval) {
@@ -103,6 +92,7 @@ public class RequestProcessor {
     private static List<KeyWord> findKeyWords(String string) {
         List<KeyWord> list = new LinkedList<>();
         List<KeyWord> words = DBContentLoader.getInstance().loadAll(KeyWord.class);
+        Assert.notNull(words, ErrorMessageConstructor.dontLoadList(KeyWord.class));
 
         for (KeyWord word : words) {
             if (string.contains(word.getContent()))
@@ -116,6 +106,7 @@ public class RequestProcessor {
     private static Command isCommand(String str) {
         HashSet<String> set = new HashSet<>(Arrays.asList(str.split(" ")));
         List<Command> commands = DBContentLoader.getInstance().loadAll(Command.class);
+        Assert.notNull(commands, ErrorMessageConstructor.dontLoadList(Command.class));
 
         for (Command cmd : commands) {
             HashSet<String> cmdSet = new HashSet<>(Arrays.asList(cmd.getCmd().split(" ")));
@@ -132,6 +123,7 @@ public class RequestProcessor {
         HashSet<String> set = new HashSet<>(Arrays.asList(words));
         // Обработка Question
         List<Question> questions = DBContentLoader.getInstance().loadAll(Question.class);
+        Assert.notNull(questions, "Don't load Questions from DB");
 
         for (Question q : questions) {
             String[] qWords = q.getContent().split(" ");
@@ -149,6 +141,7 @@ public class RequestProcessor {
 
     private static ServerAnswer<AnswerForQuestion> processingQuestion(@Nonnull Question q) {
         List<Answer> answers = DBContentLoader.getInstance().loadAnswerForQuestion(q.getId());
+        Assert.notNull(answers, ErrorMessageConstructor.dontLoadList(Answer.class));
         if (!answers.isEmpty()) {
             int r = random.nextInt(answers.size());
             Answer answer = answers.get(r);
@@ -162,6 +155,7 @@ public class RequestProcessor {
     private static ServerAnswer<AnswerForKeyWord> processingKeyWord(List<KeyWord> words) {
         for (KeyWord word : words) {
             List<Answer> answers = DBContentLoader.getInstance().loadAnswerForKeyWord(word.getId());
+            Assert.notNull(answers, ErrorMessageConstructor.dontLoadList(Answer.class));
             if (answers.isEmpty())
                 continue;
 

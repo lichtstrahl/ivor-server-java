@@ -5,7 +5,6 @@ import root.id.util.RequestProcessor;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -14,7 +13,7 @@ import java.io.IOException;
 public class RegisterServlet extends BaseServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         super.doPost(request, response);
-        UserDTO newUser = gson.fromJson(RequestProcessor.getJSONFromBody(request), UserDTO.class);
+        UserDTO newUser = gson.fromJson(getJSONFromBody(request), UserDTO.class);
         send(response, RequestProcessor.insertNewUser(newUser));
     }
 

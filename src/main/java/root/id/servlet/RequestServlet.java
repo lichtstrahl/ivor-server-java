@@ -15,7 +15,7 @@ public class RequestServlet extends BaseServlet {
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         super.doPost(request, response);
-        RequestDTO r = gson.fromJson(RequestProcessor.getJSONFromBody(request), RequestDTO.class);
+        RequestDTO r = gson.fromJson(getJSONFromBody(request), RequestDTO.class);
         send(response, RequestProcessor.processingRequest(r));
     }
 

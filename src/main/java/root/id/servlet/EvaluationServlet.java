@@ -6,7 +6,6 @@ import root.id.util.RequestProcessor;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -15,7 +14,7 @@ import java.io.IOException;
 public class EvaluationServlet extends BaseServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         super.doPost(request, response);
-        EvaluationRequest evR = gson.fromJson(RequestProcessor.getJSONFromBody(request), EvaluationRequest.class);
+        EvaluationRequest evR = gson.fromJson(getJSONFromBody(request), EvaluationRequest.class);
         if (RequestProcessor.evaluation(evR.type, evR.id, evR.eval)) {
             send(response, ServerAnswer.answerOK(null));
         } else {
