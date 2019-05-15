@@ -12,6 +12,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 
 abstract public class BaseServlet extends HttpServlet {
+    protected static final String INCORRECT_PARAM = "Некорректные параметры для запроса";
     protected static final Gson gson = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
 
     protected String getJSONFromBody(HttpServletRequest request) throws IOException {

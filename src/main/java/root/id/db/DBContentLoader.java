@@ -68,7 +68,19 @@ public class DBContentLoader {
                         "email = '"+user.email+"' AND " +
                         "lastEntry = '"+user.lastEntry+"'" +
                         ")";
-        return loadFromDB(getUsers, Client.class);
+        return selectFromDB(getUsers, Client.class);
+    }
+
+    public List<KeyWord> getConnectedKeyWord() {
+        String query =  "SELECT k.id, content\n" +
+                        "FROM communicationkey as com join keyword as k on com.keyID = k.id";
+        return selectFromDB(query, KeyWord.class);
+    }
+
+    public List<Question> getConnectedQuestion() {
+        String query =  "SELECT q.id, content\n" +
+                        "FROM communication as com join question as q on com.questionID = q.id";
+        return selectFromDB(query, Question.class);
     }
 
     public List<Client> getUser(String login) {
@@ -76,18 +88,18 @@ public class DBContentLoader {
                 "SELECT * " +
                 "FROM client " +
                 "WHERE login = '"+login+"'";
-        return loadFromDB(query, Client.class);
+        return selectFromDB(query, Client.class);
     }
 
     @Nullable
     public <T extends DBInstance> List<T> loadAll(Class<? extends DBInstance> cls) {
-        return loadFromDB("SELECT * FROM " + cls.getSimpleName(), cls);
+        return selectFromDB("SELECT * FROM " + cls.getSimpleName(), cls);
     }
 
 
     @Nullable
     public <T extends DBInstance> List<T> loadAnswerForQuestion(long qID) {
-        return loadFromDB("SELECT * \n" +
+        return selectFromDB("SELECT * \n" +
                 "FROM answer\n" +
                 "WHERE id IN (\n" +
                 "  SELECT answerID FROM communication WHERE questionID = " + qID +
@@ -96,7 +108,7 @@ public class DBContentLoader {
 
     @Nullable
     public <T extends DBInstance> List<T> loadAnswerForKeyWord(long kID) {
-        return loadFromDB("SELECT *\n" +
+        return selectFromDB("SELECT *\n" +
                 "FROM answer\n" +
                 "WHERE id IN (\n" +
                 "  SELECT answerID FROM communicationkey WHERE keyID = " + kID +
@@ -104,14 +116,14 @@ public class DBContentLoader {
     }
 
     public CommunicationKey getCommunicationKey(long answerID, long keyID) {
-        List<CommunicationKey> com =  loadFromDB("SELECT *\n" +
+        List<CommunicationKey> com =  selectFromDB("SELECT *\n" +
                 "FROM communicationkey\n" +
                 "WHERE (answerID = "+answerID+" AND keyID = "+keyID+")", CommunicationKey.class);
         return com.get(0);
     }
 
     public CommunicationKey getCommunicationKey(long id) {
-        List<CommunicationKey> com = loadFromDB("SELECT *\n" +
+        List<CommunicationKey> com = selectFromDB("SELECT *\n" +
                 "FROM communicationkey\n" +
                 "WHERE id = " + id, CommunicationKey.class);
         return com.get(0);
@@ -132,14 +144,14 @@ public class DBContentLoader {
     }
 
     public Communication getCommunication(long answerID, long qID) {
-        List<Communication> com =  loadFromDB("SELECT *\n" +
+        List<Communication> com =  selectFromDB("SELECT *\n" +
                 "FROM communication\n" +
                 "WHERE (answerID = "+answerID+" AND questionID = "+qID+")", Communication.class);
         return com.get(0);
     }
 
     public Communication getCommunication(long id) {
-        List<Communication> com = loadFromDB("SELECT *\n" +
+        List<Communication> com = selectFromDB("SELECT *\n" +
                 "FROM communication\n" +
                 "WHERE id = " + id, Communication.class);
         return com.get(0);
@@ -161,7 +173,7 @@ public class DBContentLoader {
     }
 
     @Nullable
-    private <T extends DBInstance> List<T> loadFromDB(String query, Class<? extends DBInstance> cls) {
+    private <T extends DBInstance> List<T> selectFromDB(String query, Class<? extends DBInstance> cls) {
         try (Connection connection = ds.getConnection();
              PreparedStatement ps = connection.prepareStatement(query);
              ResultSet set = ps.executeQuery()) {
