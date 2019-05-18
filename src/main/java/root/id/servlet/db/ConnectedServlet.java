@@ -2,7 +2,7 @@ package root.id.servlet.db;
 
 import root.id.dto.ServerAnswer;
 import root.id.servlet.BaseServlet;
-import root.id.util.DBProcessor;
+import root.id.service.DBService;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -15,6 +15,7 @@ public class ConnectedServlet extends BaseServlet {
     private static final String PARAM_TYPE = "type";
     private static final String TYPE_KW = "kw";
     private static final String TYPE_Q = "q";
+    private static final String TYPE_TEST = "t";
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -22,10 +23,12 @@ public class ConnectedServlet extends BaseServlet {
         String type = req.getParameter(PARAM_TYPE);
         switch (type) {
             case TYPE_KW:
-                send(resp, DBProcessor.findConnectedKW());
+                send(resp, DBService.findConnectedKW());
                 break;
             case TYPE_Q:
-                send(resp, DBProcessor.findConnectedQ());
+                send(resp, DBService.findConnectedQ());
+                break;
+            case TYPE_TEST:
                 break;
             default:
                 send(resp, ServerAnswer.answerFail(INCORRECT_PARAM));

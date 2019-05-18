@@ -1,15 +1,16 @@
-package root.id.util;
+package root.id.service;
 
 import org.springframework.util.Assert;
 import root.id.db.DBContentLoader;
 import root.id.db.KeyWord;
 import root.id.db.Question;
 import root.id.dto.ServerAnswer;
+import root.id.util.ErrorMessageConstructor;
 
 import java.util.List;
 
-public class DBProcessor {
-    private DBProcessor() {
+public class DBService {
+    private DBService() {
         throw new IllegalStateException("Это вспомогательный класс. Создание экземпляра не требуется.");
     }
 

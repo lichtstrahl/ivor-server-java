@@ -1,7 +1,8 @@
 package root.id.servlet;
 
 import root.id.dto.UserDTO;
-import root.id.util.RequestProcessor;
+import root.id.service.LoginService;
+import root.id.service.RequestService;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -15,7 +16,7 @@ public class LoginServlet extends BaseServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         super.doPost(request, response);
         UserDTO user = gson.fromJson(getJSONFromBody(request), UserDTO.class);
-        send(response, RequestProcessor.checkUsersLoginPass(user));
+        send(response, LoginService.checkUsersLoginPass(user));
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

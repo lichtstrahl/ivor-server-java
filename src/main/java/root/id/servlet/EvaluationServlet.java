@@ -2,7 +2,8 @@ package root.id.servlet;
 
 import root.id.dto.EvaluationRequest;
 import root.id.dto.ServerAnswer;
-import root.id.util.RequestProcessor;
+import root.id.service.EvaluationService;
+import root.id.service.RequestService;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -15,7 +16,7 @@ public class EvaluationServlet extends BaseServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         super.doPost(request, response);
         EvaluationRequest evR = gson.fromJson(getJSONFromBody(request), EvaluationRequest.class);
-        if (RequestProcessor.evaluation(evR.type, evR.id, evR.eval)) {
+        if (EvaluationService.evaluation(evR.type, evR.id, evR.eval)) {
             send(response, ServerAnswer.answerOK(null));
         } else {
             send(response, ServerAnswer.answerFail("Ошибка при оценке"));
