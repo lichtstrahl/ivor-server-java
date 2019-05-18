@@ -1,9 +1,11 @@
-package root.id.db;
+package root.id.db.communication;
+
+import root.id.db.DBInstance;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class Communication extends DBInstance{
+public class Communication extends DBInstance implements DBEntityCorrected {
     private long questionID;
     private long answerID;
     private int power;
@@ -29,7 +31,13 @@ public class Communication extends DBInstance{
         return power;
     }
 
+    @Override
     public int getCorrect() {
         return correct;
+    }
+
+    @Override
+    public long getID() {
+        return id;
     }
 }

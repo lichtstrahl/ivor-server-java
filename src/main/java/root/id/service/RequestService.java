@@ -1,8 +1,12 @@
 package root.id.service;
 
+import lombok.Data;
 import org.springframework.util.Assert;
 import root.id.Const;
 import root.id.db.*;
+import root.id.db.communication.Communication;
+import root.id.db.communication.CommunicationKey;
+import root.id.db.communication.DBEntityCorrected;
 import root.id.dto.*;
 import root.id.util.ErrorMessageConstructor;
 import root.id.util.StringProcessor;
@@ -23,32 +27,58 @@ public class RequestService {
         return new RequestService();
     }
 
+    /**
+     * Поступивший запрос делится на предложения. Каждое предложение обрабатывается отдельно.
+     * Собирается список ответов, подобранных к каждому выражению.
+     * После чего вычисляется наиболее корректный из подобранных ответов.
+     * Он и выдается. В слуаче их отсутствия - шаблонная фраза.
+     * Для каждого предложения сперва проверяется соответствие вопросу, потом уже ключевому слову.
+     * Предполагается, что неважен порядок предложений. Важно, насколько хорошо можно подобрать на них ответ.
+     */
     public ServerAnswer processingRequest(RequestDTO request) throws IOException {
-        String liteString = stringProcessor
-                                        .setNewValue(request.request)
-                                        .createFromString(request.getRequest())
-                                        .toStdFormat()
-                                        .getValue();
+        String[] array = StringProcessor.split(request.getRequest());
+        List<HolderAnswerAndCommunication> list = new LinkedList<>();
         random.setSeed(Calendar.getInstance().getTimeInMillis());
-        return ServerAnswer.answerOK(AnswerForQuestion.valueOf(liteString, 0L));
-        /*
-        Command c = isCommand(liteString);
-        if (c != null) {
-            return ServerAnswer.answerOK(processingCommand(c));
-        } else {
-            Question q = isQuestion(liteString);
-            if (q != null) {
-                return processingQuestion(q);
+
+        for (String str : array) {
+            String liteString = stringProcessor
+                    .setNewValue(str)
+                    .toStdFormat()
+                    .getValue();
+
+            Command c = isCommand(liteString);
+            if (c != null) {
+                return ServerAnswer.answerOK(processingCommand(c));
             } else {
+                Question q = isQuestion(liteString);
+                HolderAnswerAndCommunication answer = (q != null) ? processingQuestion(q) : null;
+
+
                 List<KeyWord> keyWords = findKeyWords(liteString);
-                if (!keyWords.isEmpty()) {
-                    return  processingKeyWord(keyWords);
-                }
+                HolderAnswerAndCommunication keyAnswer = (!keyWords.isEmpty()) ?  processingKeyWord(keyWords) : null;
+
+                if (answer != null)
+                    list.add(answer);
+                else if (keyAnswer != null)
+                    list.add(keyAnswer);
             }
         }
 
-        return ServerAnswer.answerOK(AnswerForQuestion.valueOf(Const.IVOR_NO_ANSWER, null));
-        */
+        if (list.size() != 0) {
+            int indexBest = 0;
+            for (int h = 0; h < list.size(); h++) {
+                if (list.get(h).getCommunication().getCorrect() > list.get(indexBest).getCommunication().getCorrect()) {
+                    indexBest = h;
+                }
+            }
+
+            HolderAnswerAndCommunication holder = list.get(indexBest);
+            AnswerContainer container = (holder.getCommunication() instanceof Communication)
+                ? AnswerForQuestion.valueOf(holder.getAnswer().getContent(), holder.getCommunication().getID())// AnswerForQuestion
+                : AnswerForKeyWord.valueOf(holder.getAnswer().getContent(), holder.getCommunication().getID());// AnswerForKeyWord
+            return ServerAnswer.answerOK(container);
+        } else
+            return ServerAnswer.answerOK(AnswerForQuestion.valueOf(Const.IVOR_NO_ANSWER, null));
     }
 
     private List<KeyWord> findKeyWords(String string) {
@@ -80,7 +110,7 @@ public class RequestService {
     }
 
     @Nullable
-    private Question isQuestion(String str) {
+    public Question isQuestion(String str) {
         List<String> words = Arrays.asList(str.split(" "));
         HashSet<String> set = new HashSet<>(words);
         // Обработка Question
@@ -98,23 +128,24 @@ public class RequestService {
     }
 
     private String processingCommand(Command c) {
-        return Const.COMMAND_NOT_SUPPORTED_IN_WEV_VERSION;
+        return Const.COMMAND_NOT_SUPPORTED_IN_WEB_VERSION;
     }
 
-    private ServerAnswer<AnswerForQuestion> processingQuestion(@Nonnull Question q) {
+    @Nullable
+    private HolderAnswerAndCommunication processingQuestion(@Nonnull Question q) {
         List<Answer> answers = DBContentLoader.getInstance().loadAnswerForQuestion(q.getId());
         Assert.notNull(answers, ErrorMessageConstructor.dontLoadList(Answer.class));
         if (!answers.isEmpty()) {
             int r = random.nextInt(answers.size());
             Answer answer = answers.get(r);
             Communication com = DBContentLoader.getInstance().getCommunication(answer.getId(), q.getId());
-            return ServerAnswer.answerOK(AnswerForQuestion.valueOf(answer.getContent(), com.getId()));
+            return HolderAnswerAndCommunication.buildHolder(answer, com);
         }
-
-        return ServerAnswer.answerOK(AnswerForQuestion.valueOf(Const.IVOR_NO_ANSWER_FOR_QUESTION, null));
+        return null;
     }
 
-    private ServerAnswer<AnswerForKeyWord> processingKeyWord(List<KeyWord> words) {
+    @Nullable
+    private HolderAnswerAndCommunication processingKeyWord(List<KeyWord> words) {
         for (KeyWord word : words) {
             List<Answer> answers = DBContentLoader.getInstance().loadAnswerForKeyWord(word.getId());
             Assert.notNull(answers, ErrorMessageConstructor.dontLoadList(Answer.class));
@@ -124,10 +155,10 @@ public class RequestService {
             int r = random.nextInt(answers.size());
             Answer answer =  answers.get(r);
             CommunicationKey comKey = DBContentLoader.getInstance().getCommunicationKey(answer.getId(), word.getId());
-            return ServerAnswer.answerOK(AnswerForKeyWord.valueOf(answer.getContent(), comKey.getId()));
+            return HolderAnswerAndCommunication.buildHolder(answer, comKey);
         }
 
-        return ServerAnswer.answerOK(AnswerForKeyWord.valueOf(Const.IVOR_NO_ANSWER_FOR_KEYWORDS, null));
+        return null;
     }
 
     public static String init() {
@@ -135,4 +166,19 @@ public class RequestService {
         System.out.println(msg);
         return msg;
     }
+
+    @Data
+    private static class HolderAnswerAndCommunication {
+        private Answer answer;
+        private DBEntityCorrected communication;
+
+        public static HolderAnswerAndCommunication buildHolder(Answer answer, DBEntityCorrected com) {
+            HolderAnswerAndCommunication holder = new HolderAnswerAndCommunication();
+            holder.setAnswer(answer);
+            holder.setCommunication(com);
+            return holder;
+        }
+    }
+
+
 }

@@ -3,8 +3,10 @@ package root.id.db;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class BaseContentType extends DBInstance {
+abstract public class BaseContentType extends DBInstance {
     protected String content;
+
+    public BaseContentType() {}
 
     public BaseContentType(ResultSet set) throws SQLException {
         super(set);

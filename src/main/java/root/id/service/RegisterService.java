@@ -15,7 +15,7 @@ public class RegisterService {
             return ServerAnswer.answerFail(Const.Database.LOGIN_BUSY);
         }
 
-        if (DBContentLoader.getInstance().insertNewUser(user)) {
+        if (DBContentLoader.getInstance().insertNewEntity(user)) {
             return ServerAnswer.answerOK(null);
         } else {
             return ServerAnswer.answerFail(Const.Database.ERROR_INSERT_USER);

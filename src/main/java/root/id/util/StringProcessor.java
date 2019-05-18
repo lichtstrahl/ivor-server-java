@@ -4,6 +4,8 @@ import lombok.Data;
 import root.id.service.PythonServer;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 @Data
 public class StringProcessor {
@@ -31,6 +33,14 @@ public class StringProcessor {
 
         value = morphologyServer.parseToNormalAsString(value).trim();
         return this;
+    }
+
+    /**
+     * Разбиваем одно предложение на несколько более маленьких
+     * @return
+     */
+    public static String[] split(String message) {
+        return message.split("\\.|!|\\?");
     }
 
     public StringProcessor setNewValue(String str) {

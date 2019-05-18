@@ -2,6 +2,8 @@ package root.id.db;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import root.id.db.communication.Communication;
+import root.id.db.communication.CommunicationKey;
 import root.id.dto.UserDTO;
 import root.id.Const;
 
@@ -47,12 +49,16 @@ public class DBContentLoader {
         return instance;
     }
 
-    public boolean insertNewUser(UserDTO user) {
-        String query =
-                "insert into client " +
-                        "(realName, login, pass, age, city, email, lastEntry, admin)\n" +
-                "values  ('"+user.realName+ "', '" + user.login + "', '" + user.pass + "', " + user.age + ", '" + user.city + "', '" + user.email + "', '" + user.lastEntry + "', " + user.admin +");";
+    public boolean insertNewEntity(DBEntity entity) {
+        String query = entity.buildInsertQuery();
         return modifyDataInDB(query);
+    }
+
+    public List<Question> searchQuestion(String content) {
+        String query =  "SELECT * " +
+                        "FROM question as q " +
+                        "WHERE q.content = '"+content+"'";
+        return selectFromDB(query, Question.class);
     }
 
     public List<Client> getUser(UserDTO user) {

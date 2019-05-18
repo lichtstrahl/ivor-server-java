@@ -1,7 +1,5 @@
 package root.id.db;
 
-import root.id.db.BaseContentType;
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
