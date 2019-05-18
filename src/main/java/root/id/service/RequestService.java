@@ -30,7 +30,7 @@ public class RequestService {
                                         .toStdFormat()
                                         .getValue();
         random.setSeed(Calendar.getInstance().getTimeInMillis());
-        return ServerAnswer.answerOK(liteString);
+        return ServerAnswer.answerOK(AnswerForQuestion.valueOf(liteString, 0L));
         /*
         Command c = isCommand(liteString);
         if (c != null) {
