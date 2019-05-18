@@ -54,12 +54,15 @@ public class DBContentLoader {
         return modifyDataInDB(query);
     }
 
-    public List<Question> searchQuestion(String content) {
-        String query =  "SELECT * " +
-                        "FROM question as q " +
-                        "WHERE q.content = '"+content+"'";
-        return selectFromDB(query, Question.class);
+    public Question searchQuestion(String content) {
+        return (Question)searchEntity(content, Question.TABLE_NAME, Question.class).get(0);
     }
+
+    public Answer searchAnswer(String content) {
+        return (Answer)searchEntity(content, Answer.TABLE_NAME, Answer.class).get(0);
+    }
+
+
 
     public List<Client> getUser(UserDTO user) {
         String getUsers =
@@ -176,6 +179,17 @@ public class DBContentLoader {
                 "where id = "+id+"";
 
         return modifyDataInDB(query);
+    }
+
+    //
+    // PRIVATE
+    //
+
+    private List<? extends DBInstance> searchEntity(String content, String tableName, Class<? extends DBInstance> cls) {
+        String query = "SELECT * " +
+                "FROM " + tableName + " as tmp " +
+                "WHERE tmp.content = '" + content + "'";
+        return selectFromDB(query, cls);
     }
 
     @Nullable

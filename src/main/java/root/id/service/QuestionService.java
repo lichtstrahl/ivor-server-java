@@ -26,7 +26,7 @@ public class QuestionService {
                 .getValue();
         Question q = RequestService.getInstance().isQuestion(question);
         if (q == null && DBContentLoader.getInstance().insertNewEntity(Question.fromContent(question))) {
-            Question newQuestion = DBContentLoader.getInstance().searchQuestion(question).get(0);
+            Question newQuestion = DBContentLoader.getInstance().searchQuestion(question);
             return ServerAnswer.answerOK(newQuestion);
         } else {
             return ServerAnswer.answerFail(q != null ? Const.Database.NOT_UNIQUE_QUESTION : Const.Database.ERROR_INSERT_QUESTION);

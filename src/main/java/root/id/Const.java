@@ -22,6 +22,8 @@ public class Const {
         public static final String LOGIN_BUSY = "Такой логин уже занят";
         public static final String ERROR_INSERT_QUESTION = "Ошибка при добавлении нового вопроса";
         public static final String NOT_UNIQUE_QUESTION = "Похожий вопрос уже существует в БД";
+        public static final String ERROR_INSERT_ANSWER = "Ошибка при добавлении нового вопроса";
+        public static final String ERROR_INSERT_COMMUNICATION = "Ошибка при добавлении связи вопрос-ответ";
     }
 }
 

@@ -6,7 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class Question extends BaseContentType implements DBEntity {
-
+    public static final String TABLE_NAME = "question";
     public Question() {}
 
     public Question(ResultSet set) throws SQLException {
@@ -22,7 +22,7 @@ public class Question extends BaseContentType implements DBEntity {
 
     @Override
     public String getTableName() {
-        return "question";
+        return TABLE_NAME;
     }
 
     public static Question fromContent(String content) {
