@@ -9,6 +9,7 @@ public class Const {
     public static final String INVALID_LOGIN = "Указанный логин не найден.";
     public static final String NULL_POINTER_EXCEPTION = "Ошибка с нулевым указателем";
     public static final String OK = "OK";
+    public static final String NEED_ADD_QUESTION_TO_DB = "Пусто. Необходимо добваить вопросы в БД";
 
 
     public static class Database {
