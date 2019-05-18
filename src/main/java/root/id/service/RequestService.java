@@ -120,7 +120,7 @@ public class RequestService {
         for (Question q : questions) {
             String[] qWords = q.getContent().split(" ");
             HashSet<String> qSet = new HashSet<>(Arrays.asList(qWords));
-            if (qSet.containsAll(set)) {
+            if (qSet.containsAll(set) || set.containsAll(qSet)) {
                 return q;
             }
         }
