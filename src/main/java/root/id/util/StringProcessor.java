@@ -35,6 +35,13 @@ public class StringProcessor {
         return this;
     }
 
+    public StringProcessor deleteSpace() {
+        value = value
+                .trim()
+                .replaceAll("\\s+", " ");
+        return this;
+    }
+
     /**
      * Разбиваем одно предложение на несколько более маленьких
      * @return
