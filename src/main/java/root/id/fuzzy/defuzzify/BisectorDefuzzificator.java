@@ -4,6 +4,11 @@ import root.id.fuzzy.Variable;
 import root.id.fuzzy.function.RepresentationFunction;
 
 public class BisectorDefuzzificator extends IterativeDefuzzificator {
+
+    public static BisectorDefuzzificator create() {
+        return new BisectorDefuzzificator();
+    }
+
     @Override
     public double apply(Variable var, RepresentationFunction function) {
         double min = var.min();

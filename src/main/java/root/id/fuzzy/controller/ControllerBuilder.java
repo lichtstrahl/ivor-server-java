@@ -1,4 +1,4 @@
-package root.id.fuzzy;
+package root.id.fuzzy.controller;
 
 import root.id.fuzzy.aggregation.Aggregator;
 import root.id.fuzzy.aggregation.MaximumAggregator;

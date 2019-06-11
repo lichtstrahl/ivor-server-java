@@ -1,6 +1,8 @@
-package root.id.fuzzy;
+package root.id.fuzzy.controller;
 
 import lombok.AllArgsConstructor;
+import root.id.fuzzy.Term;
+import root.id.fuzzy.Variable;
 import root.id.fuzzy.aggregation.Aggregator;
 import root.id.fuzzy.defuzzify.Defuzzificator;
 import root.id.fuzzy.function.CompositeFunction;

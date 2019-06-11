@@ -1,8 +1,6 @@
 package root.id.fuzzy.function;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import root.id.fuzzy.Interval;
 
 @Data
 public class SFunction implements RepresentationFunction, Symmetric, IntervalAware {
@@ -28,7 +26,7 @@ public class SFunction implements RepresentationFunction, Symmetric, IntervalAwa
         } else if (x < center) {
             return 2.0 * Math.pow(((x - a) / (b - a)), 2);
         } else if (x <= b) {
-            return 1.0 - (2.0 * Math.pow(((b - x) / (b - a)), 2));
+            return 1.0 - (2.0 * Math.pow(((x - b) / (b - a)), 2));
         } else {
             return 1.0;
         }

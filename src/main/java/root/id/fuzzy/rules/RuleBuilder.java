@@ -1,6 +1,6 @@
 package root.id.fuzzy.rules;
 
-import root.id.fuzzy.ControllerBuilder;
+import root.id.fuzzy.controller.ControllerBuilder;
 import root.id.fuzzy.Term;
 import root.id.fuzzy.Variable;
 

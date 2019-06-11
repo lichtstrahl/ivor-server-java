@@ -1,4 +1,6 @@
-package root.id.fuzzy.aggregation;
+package root.id.fuzzy.aggregation.norm;
+
+import root.id.fuzzy.aggregation.Aggregator;
 
 public interface Norm extends Aggregator {
     enum Type {

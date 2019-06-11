@@ -1,5 +1,7 @@
 package root.id.fuzzy.aggregation;
 
+import root.id.fuzzy.aggregation.norm.Norm;
+
 public class MinimumAggregator implements Norm {
     public static final MinimumAggregator INSTANCE = new MinimumAggregator();
 

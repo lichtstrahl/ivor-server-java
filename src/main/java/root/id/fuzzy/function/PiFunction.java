@@ -23,8 +23,8 @@ public class PiFunction implements RepresentationFunction, Symmetric {
         this.a = center - r/2;
         this.r = center;
         this.b = center + r/2;
-        this.p = (r+a)/2;
-        this.q = (b+r)/2;
+        this.p = (center+a)/2;
+        this.q = (center+b)/2;
     }
 
     @Override

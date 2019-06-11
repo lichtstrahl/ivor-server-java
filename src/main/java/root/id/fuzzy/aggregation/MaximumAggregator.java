@@ -1,5 +1,7 @@
 package root.id.fuzzy.aggregation;
 
+import root.id.fuzzy.aggregation.norm.Norm;
+
 public class MaximumAggregator implements Norm {
     public static final MaximumAggregator INSTANCE = new MaximumAggregator();
 

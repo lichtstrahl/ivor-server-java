@@ -2,7 +2,6 @@ package root.id.fuzzy.function;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import root.id.fuzzy.Interval;
 
 @Data
 @AllArgsConstructor
